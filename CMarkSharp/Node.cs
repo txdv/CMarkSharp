@@ -46,7 +46,7 @@ namespace CMarkSharp
 		Image,
 
 		FirstInline = Text,
-		Lastinline  = Image,
+		LastInline  = Image,
 	};
 
 	public class Node : IDisposable
