@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Runtime.InteropServices;
 
 namespace CMarkSharp
@@ -26,6 +27,22 @@ namespace CMarkSharp
 		unsafe public static Version Version {
 			get {
 				return new Version(VersionString);
+			}
+		}
+
+		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
+		unsafe internal static extern sbyte* cmark_markdown_to_html(byte* ptr, int len, int options);
+
+		unsafe public static string ToHtml(string text, Encoding encoding = null)
+		{
+			if (encoding == null) {
+				encoding = Encoding.Default;
+			}
+
+			var bytes = encoding.GetBytes(text);
+			fixed (byte* ptr = bytes) {
+				// TODO: make options viable
+				return new string(cmark_markdown_to_html(ptr, bytes.Length, 0));
 			}
 		}
 	}
