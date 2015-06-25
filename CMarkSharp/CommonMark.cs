@@ -56,7 +56,7 @@ namespace CMarkSharp
 
 		public static Node ParseDocument(IntPtr buffer, int length, CMarkOptions options = default(CMarkOptions))
 		{
-			return new Node(cmark_parse_document(buffer, length, options.ToOptions()));
+			return Node.Create(cmark_parse_document(buffer, length, options.ToOptions()));
 		}
 
 		unsafe public static Node ParseDocument(byte[] buffer, int index, int count, CMarkOptions options = default(CMarkOptions))
@@ -99,7 +99,7 @@ namespace CMarkSharp
 
 		public static Node ParseFile(IntPtr fileHandle, CMarkOptions options = default(CMarkOptions))
 		{
-			return new Node(cmark_parse_file(fileHandle, options.ToOptions()));
+			return Node.Create(cmark_parse_file(fileHandle, options.ToOptions()));
 		}
 
 		public static Node ParseFile(System.IO.FileStream fileStream, CMarkOptions options = default(CMarkOptions))

@@ -29,10 +29,10 @@ namespace CMarkSharp
 		Html,
 		Paragraph,
 		Header,
-		HRule,
+		HorizontalRule,
 
 		FirstBlock = Document,
-		LastBlock  = HRule,
+		LastBlock  = HorizontalRule,
 
 		/* Inline */
 		Text,
@@ -49,8 +49,53 @@ namespace CMarkSharp
 		LastInline  = Image,
 	};
 
-	public class Node : IDisposable
+	public abstract class Node : IDisposable
 	{
+		internal static Node Create(IntPtr pointer)
+		{
+			var nodeType = cmark_node_get_type(pointer);
+			switch (nodeType) {
+			case NodeType.BlockQuote:
+				return new BlockQuoteNode(pointer);
+			case NodeType.CodeBlock:
+				return new CodeBlockNode(pointer);
+			case NodeType.Code:
+				return new CodeNode(pointer);
+			case NodeType.Document:
+				return new DocumentNode(pointer);
+			case NodeType.Emphasis:
+				return new EmphasisNode(pointer);
+			case NodeType.Header:
+				return new HeaderNode(pointer);
+			case NodeType.HorizontalRule:
+				return new HorizontalRuleNode(pointer);
+			case NodeType.Image:
+				return new ImageNode(pointer);
+			case NodeType.LineBreak:
+				return new LineBreakNode(pointer);
+			case NodeType.Link:
+				return new LinkNode(pointer);
+			case NodeType.List:
+				return new ListNode(pointer);
+			case NodeType.InlineHtml:
+				return new InlineHtmlNode(pointer);
+			case NodeType.Item:
+				return new ItemNode(pointer);
+			case NodeType.Paragraph:
+				return new ParagraphNode(pointer);
+			case NodeType.Html:
+				return new HtmlNode(pointer);
+			case NodeType.SoftBreak:
+				return new SoftBreakNode(pointer);
+			case NodeType.Strong:
+				return new StrongNode(pointer);
+			case NodeType.Text:
+				return new TextNode(pointer);
+			default:
+				throw new Exception(string.Format("NodeType {0} not supported", nodeType));
+			}
+		}
+
 		internal IntPtr pointer;
 
 		internal Node(IntPtr pointer)
@@ -61,7 +106,7 @@ namespace CMarkSharp
 		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cmark_node_new(NodeType type);
 
-		public Node(NodeType nodeType)
+		protected Node(NodeType nodeType)
 			: this(cmark_node_new(nodeType))
 		{
 		}
@@ -93,7 +138,7 @@ namespace CMarkSharp
 
 		public Node Next {
 			get {
-				return new Node(cmark_node_next(pointer));
+				return Node.Create(cmark_node_next(pointer));
 			}
 		}
 
@@ -102,7 +147,7 @@ namespace CMarkSharp
 
 		public Node Previous {
 			get {
-				return new Node(cmark_node_previous(pointer));
+				return Node.Create(cmark_node_previous(pointer));
 			}
 		}
 
@@ -111,7 +156,7 @@ namespace CMarkSharp
 
 		public Node Parent {
 			get {
-				return new Node(cmark_node_previous(pointer));
+				return Node.Create(cmark_node_previous(pointer));
 			}
 		}
 
@@ -120,7 +165,7 @@ namespace CMarkSharp
 
 		public Node FirstChild {
 			get {
-				return new Node(cmark_node_first_child(pointer));
+				return Node.Create(cmark_node_first_child(pointer));
 			}
 		}
 
@@ -129,7 +174,7 @@ namespace CMarkSharp
 
 		public Node LastChild {
 			get {
-				return new Node(cmark_node_first_child(pointer));
+				return Node.Create(cmark_node_first_child(pointer));
 			}
 		}
 
@@ -166,173 +211,6 @@ namespace CMarkSharp
 				return new string(cmark_node_get_type_string(pointer));
 			}
 		}
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern IntPtr cmark_node_get_literal(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_literal(IntPtr node, IntPtr content);
-
-		// TODO: This thing should return a string, investigate what it really is
-		public IntPtr Literal {
-			get {
-				return cmark_node_get_literal(pointer);
-			}
-			set {
-				int r = cmark_node_set_literal(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_get_header_level(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_header_level(IntPtr node, int level);
-
-		public int HeaderLevel {
-			get {
-				return cmark_node_get_header_level(pointer);
-			}
-			set {
-				int r = cmark_node_set_header_level(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		#region List
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern ListType cmark_node_get_list_type(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_list_type(IntPtr node, ListType type);
-
-		public ListType ListType {
-			get {
-				return cmark_node_get_list_type(pointer);
-			}
-			set {
-				int r = cmark_node_set_list_type(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern DelimeterType cmark_node_get_list_delim(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_list_delim(IntPtr node, DelimeterType type);
-
-		public DelimeterType DelimeterType {
-			get {
-				return cmark_node_get_list_delim(pointer);
-			}
-			set {
-				int r = cmark_node_set_list_delim(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_get_list_start(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_list_start(IntPtr node, int start);
-
-		public int Start {
-			get {
-				return cmark_node_get_list_start(pointer);
-			}
-			set {
-				int r = cmark_node_set_list_start(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_get_list_tight(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_list_tight(IntPtr node, int start);
-
-		public int Tightness {
-			get {
-				return cmark_node_get_list_tight(pointer);
-			}
-			set {
-				int r = cmark_node_set_list_tight(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		#endregion
-
-		#region CodeBlock
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern IntPtr cmark_node_get_fence_info(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_fence_info(IntPtr node, IntPtr info);
-
-		// TODO: this should be a string, investigate
-
-		public IntPtr Info {
-			get {
-				return cmark_node_get_fence_info(pointer);
-			}
-			set {
-				int r = cmark_node_set_fence_info(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		#endregion
-
-		#region Url
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern IntPtr cmark_node_get_url(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_url(IntPtr node, IntPtr info);
-
-		// TODO: This should be a string, investigate
-
-		public IntPtr Url {
-			get {
-				return cmark_node_get_url(pointer);
-			}
-			set {
-				int r = cmark_node_set_url(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		#endregion
-
-		#region Image
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern IntPtr cmark_node_get_title(IntPtr node);
-
-		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int cmark_node_set_title(IntPtr node, IntPtr info);
-
-		// TODO: This should be a string, investigate
-
-		public IntPtr Title {
-			get {
-				return cmark_node_get_title(pointer);
-			}
-			set {
-				int r = cmark_node_set_title(pointer, value);
-				Ensure.Success(r);
-			}
-		}
-
-		#endregion
 
 		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int cmark_node_get_start_line(IntPtr node);

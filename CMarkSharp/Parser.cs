@@ -100,7 +100,7 @@ namespace CMarkSharp
 
 		public Node Finish()
 		{
-			return new Node(cmark_parser_finish(pointer));
+			return Node.Create(cmark_parser_finish(pointer));
 		}
 	}
 }

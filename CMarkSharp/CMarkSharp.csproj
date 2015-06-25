@@ -40,6 +40,26 @@
     <Compile Include="Node.cs" />
     <Compile Include="CMarkOptions.cs" />
     <Compile Include="CommonMark.cs" />
+    <Compile Include="ListNode.cs" />
+    <Compile Include="DocumentNode.cs" />
+    <Compile Include="HeaderNode.cs" />
+    <Compile Include="TextNode.cs" />
+    <Compile Include="ParagraphNode.cs" />
+    <Compile Include="EmphasisNode.cs" />
+    <Compile Include="ItemNode.cs" />
+    <Compile Include="LinkNode.cs" />
+    <Compile Include="ResourceNode.cs" />
+    <Compile Include="ImageNode.cs" />
+    <Compile Include="BlockQuoteNode.cs" />
+    <Compile Include="LiteralNode.cs" />
+    <Compile Include="CodeBlockNode.cs" />
+    <Compile Include="HtmlNode.cs" />
+    <Compile Include="InlineHtmlNode.cs" />
+    <Compile Include="CodeNode.cs" />
+    <Compile Include="HorizontalRuleNode.cs" />
+    <Compile Include="LineBreakNode.cs" />
+    <Compile Include="StrongNode.cs" />
+    <Compile Include="SoftBreakNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

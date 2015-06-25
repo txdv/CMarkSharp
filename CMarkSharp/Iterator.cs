@@ -62,7 +62,7 @@ namespace CMarkSharp
 
 		public Node Node {
 			get {
-				return new Node(cmark_iter_get_node(pointer));
+				return Node.Create(cmark_iter_get_node(pointer));
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace CMarkSharp
 		public Node Root
 		{
 			get {
-				return new Node(cmark_iter_get_root(pointer));
+				return Node.Create(cmark_iter_get_root(pointer));
 			}
 		}
 
