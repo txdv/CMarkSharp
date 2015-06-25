@@ -10,13 +10,43 @@ namespace CMarkSharp
 		CMARK_EVENT_EXIT
 	};
 
-	public class Iterator
+	public class Iterator : IDisposable
 	{
 		IntPtr pointer;
 
 		private Iterator(IntPtr pointer)
 		{
 			this.pointer = pointer;
+		}
+
+		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cmark_iter_new(IntPtr root);
+
+		public Iterator(Node node)
+			: this(cmark_iter_new(node.pointer))
+		{
+		}
+
+		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
+		internal static extern void cmark_iter_free(IntPtr iter);
+
+		~Iterator()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected void Dispose(bool disposing)
+		{
+			if (pointer != IntPtr.Zero) {
+				cmark_iter_free(pointer);
+				pointer = IntPtr.Zero;
+			}
 		}
 
 		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
