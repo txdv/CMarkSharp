@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace CMarkSharp
 {
-	public class Markdown
+	public class CommonMark
 	{
 		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int cmark_version();
