@@ -8,7 +8,7 @@ namespace CMarkSharp
 		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int cmark_version();
 
-		public static int IntegerVersion {
+		public static int VersionInteger {
 			get {
 				return cmark_version();
 			}
@@ -17,7 +17,7 @@ namespace CMarkSharp
 		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]
 		unsafe internal static extern sbyte* cmark_version_string();
 
-		unsafe public static string StringVersion {
+		unsafe public static string VersionString {
 			get {
 				return new string(cmark_version_string());
 			}
@@ -25,7 +25,7 @@ namespace CMarkSharp
 
 		unsafe public static Version Version {
 			get {
-				return new Version(StringVersion);
+				return new Version(VersionString);
 			}
 		}
 	}
