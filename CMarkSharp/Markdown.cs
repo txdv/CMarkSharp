@@ -4,38 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace CMarkSharp
 {
-	enum Options
-	{
-		Default = 0,
-		SourcePositions = 1,
-		HardBreaks = 2,
-		Normalize = 4,
-		Smart = 8,
-		ValidateUTF8 = 16
-	};
-
-	public class CMarkOptions
-	{
-		public bool SourcePositions { get; set; }
-		public bool HardBreaks { get; set; }
-		public bool Normalize { get; set; }
-		public bool Smart { get; set; }
-		public bool ValidateUTF8 { get; set; }
-
-		internal Options ToOptions()
-		{
-			Options options = Options.Default;
-
-			if (SourcePositions) options |= Options.SourcePositions;
-			if (HardBreaks)      options |= Options.HardBreaks;
-			if (Normalize)       options |= Options.Normalize;
-			if (Smart)           options |= Options.Smart;
-			if (ValidateUTF8)    options |= Options.ValidateUTF8;
-
-			return options;
-		}
-	}
-
 	public class Markdown
 	{
 		[DllImport("cmark", CallingConvention=CallingConvention.Cdecl)]

@@ -39,6 +39,7 @@
     <Compile Include="Parser.cs" />
     <Compile Include="Iterator.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="CMarkOptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
