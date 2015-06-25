@@ -12,7 +12,7 @@ namespace CMarkSharp
 		ValidateUTF8 = 16
 	};
 
-	public class CMarkOptions
+	public struct CMarkOptions
 	{
 		public bool SourcePositions { get; set; }
 		public bool HardBreaks { get; set; }
